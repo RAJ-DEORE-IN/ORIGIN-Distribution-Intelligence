@@ -1,0 +1,1704 @@
+# ORIGIN
+## Distribution Intelligence & Inventory Optimization Engine
+### Master Product, UX, Architecture, Security and Implementation Specification
+
+You are acting as a senior product architect, principal full-stack engineer, supply-chain optimization engineer, security engineer, and premium enterprise UI/UX designer.
+
+Your task is to build ORIGIN: a real, functional, secure, data-driven distribution intelligence platform for FMCG supply chains.
+
+This is not a static dashboard, a UI-only prototype, or a landing page pretending to be a complete product.
+
+Build a cohesive working application in which the user can authenticate, create an organization, upload real data, validate it, analyze inventory imbalances, receive feasible and explainable stock-transfer recommendations, compare planning outcomes, and export results.
+
+Every important feature must have a clear purpose, working behavior, and understandable explanation.
+
+Follow the requirements below as the product specification.
+
+If a requirement depends on infrastructure unavailable in the current environment, identify the limitation honestly and implement the best secure, supported alternative. Never simulate a security feature or silently substitute mock behavior for a real capability.
+
+---
+
+# 1. PRODUCT VISION
+
+ORIGIN helps FMCG companies make better distribution and inventory decisions across warehouses, distribution centers, and retail locations.
+
+The core problem is inventory imbalance:
+
+- Some locations have excess inventory.
+- Other locations face potential stockouts.
+- Demand varies between locations.
+- Transfers incur transportation costs and take time.
+- Perishable products can expire before they are sold.
+- Moving stock from one location can create a shortage at another.
+- Spreadsheet-based decisions are slow and difficult to audit.
+
+ORIGIN should transform inventory, sales, route, and optional expiry data into actionable, prioritized, explainable transfer recommendations.
+
+The product must answer:
+
+1. Which location or SKU has the most urgent inventory risk?
+2. How much stock is actually needed?
+3. Which source locations can safely supply it?
+4. How much stock can be transferred without endangering the source?
+5. Will the transfer arrive before the destination needs it?
+6. Is the transfer economically and operationally feasible?
+7. Why is this recommendation ranked above another?
+8. What would happen if the planner accepted the recommendation?
+9. How does the ORIGIN plan compare with a defined baseline?
+10. Which assumptions, constraints, and calculations produced the result?
+
+ORIGIN is a decision-support system.
+
+It recommends transfers and supports human review. It must not automatically dispatch shipments or claim to execute physical transfers.
+
+## Core product principle
+
+Every recommendation must be traceable to actual input data, defined formulas, operational constraints, and visible assumptions.
+
+Never prioritize impressive-looking charts over correct calculations.
+
+Never invent performance improvements.
+
+---
+
+# 2. DESIGN DIRECTION: PREMIUM, CLEAN, CLASSIC
+
+The interface must look like a carefully designed premium software product.
+
+Use the clarity, restraint, typography, spacing, and interaction quality associated with excellent Google products and the ChatGPT web interface as general design inspiration.
+
+Do not directly copy either product's interface.
+
+Create an original visual identity for ORIGIN.
+
+## 2.1 White theme
+
+Use a white-first visual system.
+
+Preferred foundation:
+- White main canvas.
+- Soft off-white secondary surfaces where useful.
+- Dark charcoal or near-black primary text.
+- Restrained neutral borders.
+- Muted gray supporting text.
+- One consistent, sophisticated accent color.
+- Semantic colors for risk, success, warnings, and errors.
+
+Avoid:
+- Dark mode as the default.
+- Excessive gradients.
+- Rainbow colors.
+- Excessive saturated backgrounds.
+- Large decorative color blocks.
+- Unnecessary glassmorphism.
+- Heavy shadows around every component.
+- Generic AI-generated dashboard aesthetics.
+
+The application must feel calm, precise, modern, and trustworthy.
+
+## 2.2 Floating navigation and tabs
+
+Create a refined navigation system with floating or softly elevated navigation elements where appropriate.
+
+Navigation may use:
+- A clean sidebar on desktop.
+- Compact, clearly selected navigation states.
+- Subtle floating action bars where they improve usability.
+- Mobile-friendly navigation on smaller screens.
+- Carefully placed contextual action panels.
+
+Do not make every element float.
+
+Do not use excessive pill-shaped controls or oversized rounded cards.
+
+Use floating surfaces only when they improve hierarchy, focus, or interaction.
+
+Selected tabs may have a subtle translucent or softly blurred background.
+
+Use blur sparingly, primarily for:
+- Selected navigation states.
+- Small contextual overlays.
+- Occasional floating panels.
+- Focused onboarding overlays.
+
+Keep text and important data fully legible.
+
+## 2.3 Typography
+
+Typography is a major part of the product identity.
+
+Use a clean, premium sans-serif font system. Prefer a reliable modern typeface such as Inter or an equivalent available font.
+
+Establish a consistent hierarchy:
+
+- Large editorial-style headings for page introductions.
+- Bold, confident headings for major sections.
+- Clear medium-sized headings for panels.
+- Highly readable body text.
+- Compact but legible labels.
+- Tabular numerals for inventory quantities, costs, percentages, and comparisons.
+
+Use large typography selectively.
+
+For example, an Overview page may introduce itself with:
+
+"See your distribution network clearly."
+
+A Risk Analysis page may use:
+
+"Find the next stockout before it happens."
+
+These are examples of design tone, not mandatory marketing claims.
+
+Large centered typography may be used on:
+- The public landing page.
+- Authentication screens.
+- Empty states.
+- First-run onboarding.
+- Important workflow introductions.
+
+Do not center every heading or make ordinary operational tables oversized.
+
+The interface should balance bold typography with information density.
+
+## 2.4 Spacing and layout
+
+Use a consistent spacing system.
+
+Give important information enough breathing room.
+
+Align headings, filters, tables, charts, and action areas carefully.
+
+Use strong visual hierarchy instead of decorative boxes.
+
+Prefer:
+- Open layouts.
+- Clear section separation.
+- Thin, subtle borders.
+- Carefully sized floating panels.
+- Well-designed tables.
+- Consistent alignment.
+- Purposeful whitespace.
+
+Avoid:
+- Clutter.
+- Random spacing.
+- Excessive nested cards.
+- Large empty spaces that waste operational screen area.
+- Unnecessary dividers.
+- Components that look visually disconnected.
+
+## 2.5 Animation
+
+Use animation only where it improves understanding or provides meaningful feedback.
+
+Acceptable examples:
+- A subtle page transition.
+- A navigation indicator moving between tabs.
+- A panel appearing smoothly.
+- A guided-tour highlight.
+- A progress indicator during analysis.
+- A small confirmation animation after a successful action.
+
+Avoid:
+- Constant movement.
+- Decorative animated backgrounds.
+- Excessive parallax.
+- Bouncing buttons.
+- Long transitions that delay work.
+- Unnecessary 3D graphics.
+
+Support reduced-motion preferences.
+
+The application must remain fast and usable when animations are disabled.
+
+## 2.6 Charts and data visualization
+
+Charts must be operationally useful.
+
+Use appropriate charts for:
+- Inventory distribution.
+- Days of inventory cover.
+- Shortage risk.
+- Excess inventory.
+- Baseline versus ORIGIN outcomes.
+- Transfer costs.
+- Data-quality status.
+- Inventory risk over time when sufficient historical data exists.
+
+Every chart must have:
+- A meaningful title.
+- Clear units.
+- Readable labels.
+- Appropriate legends.
+- Tooltips where helpful.
+- An understandable empty state.
+- A short explanation of what the chart means.
+
+Never create a chart that displays invented data as real business information.
+
+---
+
+# 3. NEW-USER EXPERIENCE: EXPLAIN THE APPLICATION
+
+A new user must not need an expert to understand ORIGIN.
+
+The application must actively teach users what its pages, tabs, buttons, metrics, filters, and workflows mean.
+
+This is a core product requirement, not a minor enhancement.
+
+However, do not show a distracting explanation beside every single control permanently.
+
+Use a combination of contextual help, guided onboarding, tooltips, introductory panels, and a replayable product tour.
+
+## 3.1 First-time user onboarding
+
+Implement the following initial journey:
+
+Public Landing Page
+→ Create Account or Sign In
+→ Authenticate Successfully
+→ Create or Join an Authorized Organization
+→ Complete Organization Setup
+→ Upload Initial Data
+→ Validate and Review Data Quality
+→ Run the First Analysis
+→ View the Results
+→ Enter the Main ORIGIN Workspace
+
+Returning users with completed setup should go directly to their authorized workspace.
+
+Do not force returning users to repeat onboarding.
+
+Persist onboarding progress securely so interrupted onboarding can resume.
+
+## 3.2 Guided onboarding steps
+
+Create a clean, visually polished, step-by-step onboarding experience.
+
+Step 1: Welcome to ORIGIN
+
+Explain in simple language:
+
+"ORIGIN helps you understand where stock is at risk, where surplus exists, and which transfers are worth considering."
+
+Show the main stages:
+- Add data.
+- Validate it.
+- Analyze inventory.
+- Review recommendations.
+- Compare outcomes.
+
+Step 2: Organization Setup
+
+Explain why organization information is required.
+
+Collect only information necessary for the current implementation, such as:
+- Organization name.
+- Relevant business details.
+- Optional planning defaults.
+
+Do not request unnecessary sensitive information.
+
+Step 3: Data Setup
+
+Explain which files the user can upload and why each is needed.
+
+Support the required data types defined in the data section below.
+
+Step 4: Data Quality
+
+Explain missing columns, invalid quantities, unknown locations, invalid dates, and other detected issues.
+
+Show what must be fixed and what can safely be reviewed without silently changing data.
+
+Step 5: First Analysis
+
+Explain that ORIGIN will calculate inventory risk and evaluate possible transfers.
+
+Before execution, show the planning scope and required assumptions.
+
+Step 6: Results Introduction
+
+Explain the meaning of:
+- Inventory risk.
+- Days of cover.
+- Projected shortage.
+- Safe source surplus.
+- Transfer feasibility.
+- Estimated transfer cost.
+- Recommendation priority.
+
+Step 7: Workspace Tour
+
+Introduce the main navigation and explain what each section is for.
+
+Allow users to finish the tour, skip optional explanations, or replay the tour later.
+
+## 3.3 Explain every important button
+
+Every important action must communicate its purpose.
+
+For example:
+
+Upload Inventory
+- Short explanation: "Add current stock quantities for each location and SKU."
+- Tooltip: "ORIGIN uses this file to calculate available inventory and identify potential shortages or surplus."
+
+Validate Data
+- Short explanation: "Check your files for missing, inconsistent, or invalid information."
+- Tooltip: "Validation must finish before the affected data can be used for recommendations."
+
+Run Analysis
+- Short explanation: "Calculate inventory risks and evaluate feasible stock transfers."
+- Tooltip: "The result depends on your uploaded data, planning settings, and available route information."
+
+Export CSV
+- Short explanation: "Download the currently selected results."
+- Tooltip: "The export reflects the current organization, analysis, and filters."
+
+Use this same design principle throughout the application.
+
+For every important button, action menu, tab, metric, chart, and workflow:
+- Give it a clear name.
+- Explain its purpose in simple language.
+- Explain what happens when activated.
+- Show prerequisites when applicable.
+- Communicate success or failure.
+- Provide a recovery path when something goes wrong.
+
+For ordinary buttons, use short tooltips or nearby descriptions.
+
+For complex workflows, use a dedicated introductory panel.
+
+For unfamiliar metrics, provide a small information icon that opens a plain-language explanation.
+
+Do not fill the interface with lengthy paragraphs.
+
+Keep explanations concise and available exactly where users need them.
+
+## 3.4 Guided-tour interaction design
+
+Implement a reusable guided-tour system.
+
+It should support:
+- First-visit guidance.
+- Spotlight highlighting for the relevant component.
+- A short explanation of the highlighted feature.
+- Step progress, such as "Step 2 of 5".
+- Back and Next actions.
+- Skip Tour.
+- Finish Tour.
+- Replay Tour from Help or Settings.
+- Keyboard accessibility.
+- Correct positioning on desktop and mobile.
+- Recalculation of spotlight positions after layout changes.
+
+Do not let a tour block essential navigation unnecessarily.
+
+Do not repeatedly show the same completed tour on every login.
+
+Persist tour completion and onboarding progress per user.
+
+If a feature is unavailable because the organization has not completed setup, explain what is missing and how to resolve it.
+
+## 3.5 Persistent help system
+
+Include a visible but unobtrusive Help entry.
+
+It should provide:
+- Product tour.
+- Page explanations.
+- Metric glossary.
+- Data-format instructions.
+- Common error explanations.
+- Basic troubleshooting.
+- Explanation of the recommendation algorithm.
+- Information about assumptions and limitations.
+
+Do not make the help system a decorative, nonfunctional button.
+
+---
+
+# 4. AUTHENTICATION AND ACCESS CONTROL
+
+Real authentication is mandatory.
+
+Do not build a demo login.
+
+Do not provide a hardcoded username and password.
+
+Do not allow unauthenticated users to enter protected pages.
+
+Do not simulate successful authentication in the frontend.
+
+## 4.1 Authentication
+
+Inspect the capabilities of the current development environment and implement a real, supported authentication system.
+
+Prefer an established authentication provider that integrates securely with the available stack.
+
+If Firebase is supported, Firebase Authentication is an acceptable option. Otherwise, use an equivalent supported provider.
+
+Implement the supported features necessary for the application:
+- Account creation.
+- Sign-in.
+- Sign-out.
+- Session persistence.
+- Protected routes.
+- Appropriate authentication error messages.
+- Password recovery where supported.
+- Secure account and session handling.
+
+Never store plaintext passwords in application data.
+
+Never put private service-account credentials, privileged API keys, or server secrets in client-side code.
+
+If provider setup requires external configuration, identify the exact configuration required. Do not pretend the integration is complete until it actually works.
+
+## 4.2 Organization access
+
+ORIGIN must support organization-scoped workspaces.
+
+A user must only access organizations to which they have been explicitly granted membership.
+
+An organization must not be accessible merely because a user knows its URL or organization ID.
+
+Implement server-side authorization for protected data and actions.
+
+Frontend route guards improve the user experience but are not a security boundary.
+
+Every protected backend operation must independently verify the authenticated identity, organization membership, and required permissions.
+
+## 4.3 Proposed roles
+
+Implement a minimal role system that supports the current product requirements.
+
+Suggested roles:
+
+Organization Admin:
+- Manage organization settings.
+- Manage authorized team members where supported.
+- Configure planning defaults.
+- Access organization data and analysis.
+- Manage data imports.
+
+Distribution Planner:
+- Review risk.
+- Run analyses.
+- Evaluate and compare recommendations.
+- Export permitted planning results.
+
+Warehouse Manager:
+- Review relevant inventory.
+- Inspect source stock and protected reserves.
+- Review transfers affecting authorized locations.
+
+Regional Manager:
+- Review regional risk.
+- Inspect demand coverage.
+- Review recommendations affecting authorized locations.
+
+Operations/Data Analyst:
+- Upload and validate data where authorized.
+- Inspect calculation evidence.
+- Review data-quality issues.
+- Export permitted analysis results.
+
+These roles are a proposed application design. Enforce only the roles and permissions actually implemented.
+
+If the current architecture does not yet support location-level access, implement organization-level authorization first and document the limitation. Do not falsely claim location-level security.
+
+Platform-wide administration is not required for the initial MVP unless the infrastructure genuinely needs it.
+
+## 4.4 Authorization requirements
+
+Implement:
+- Explicit organization membership.
+- Role and permission checks.
+- Organization-scoped database queries.
+- Backend authorization.
+- Secure access to uploaded files.
+- Protection against insecure direct-object references.
+- Appropriate security rules or equivalent backend controls.
+- Safe session handling.
+- Meaningful access-denied states.
+
+When a user opens a protected URL directly:
+- If unauthenticated, redirect to sign-in.
+- If authenticated but not authorized, show an access-denied page.
+- If onboarding is incomplete, resume the required onboarding step.
+- If authorized and setup is complete, display the requested page.
+
+Never rely on hiding a navigation item as the only permission check.
+
+---
+
+# 5. DATA STORAGE AND ORGANIZATION ISOLATION
+
+Use persistent storage supported by the selected architecture.
+
+Store relevant application data, including:
+- Organization information.
+- User membership and roles.
+- Uploaded dataset metadata.
+- Import and validation results.
+- Analysis runs.
+- Planning settings.
+- Recommendations.
+- Recommendation explanations.
+- Scenario results.
+- Relevant audit events.
+- User onboarding and tour progress.
+
+Keep actual datasets accessible only to authorized users.
+
+Use organization-scoped queries and access controls throughout the application.
+
+A user from Organization A must not be able to retrieve Organization B's inventory, analysis, uploads, or recommendations.
+
+Use stable identifiers and appropriate relationships between:
+- Organizations.
+- Users.
+- Memberships.
+- Locations.
+- SKUs.
+- Inventory records.
+- Sales records.
+- Routes.
+- Batches or expiry records where available.
+- Analysis runs.
+- Recommendations.
+- Scenario simulations.
+
+Avoid storing all important state only in frontend memory.
+
+A page refresh must not silently erase persisted application data.
+
+If a backend or storage service is not configured, clearly identify that limitation and provide a secure setup path.
+
+Do not claim that production-grade persistence or security exists until it has been implemented and tested.
+
+---
+
+# 6. DATA INGESTION AND VALIDATION
+
+ORIGIN must accept real uploaded data.
+
+The initial implementation should support CSV imports.
+
+## 6.1 Required data types
+
+Inventory data should support fields such as:
+- SKU identifier.
+- Location identifier.
+- On-hand quantity.
+- Reserved quantity where available.
+- Incoming quantity where available.
+- Relevant record date where available.
+
+Sales history should support:
+- SKU identifier.
+- Location identifier.
+- Sales date.
+- Units sold.
+
+Route and transport data should support:
+- Source location.
+- Destination location.
+- Lead time.
+- Transfer cost or a defined cost basis.
+
+Optional batch and expiry data should support:
+- SKU identifier.
+- Location identifier.
+- Batch identifier.
+- Quantity.
+- Expiry date.
+
+Capacity, pack-size, or other operational constraints should be supported when supplied.
+
+The implementation must define and document the exact accepted CSV schemas.
+
+Provide downloadable CSV templates with correct headers and example formatting.
+
+Example rows must be clearly labeled as template examples.
+
+Do not silently assume every dataset uses identical column names.
+
+Where practical, provide a column-mapping step for common alternative header names.
+
+## 6.2 Validation workflow
+
+Implement a clear workflow:
+
+Upload
+→ Inspect File
+→ Map Columns Where Necessary
+→ Validate
+→ Review Issues
+→ Resolve or Acknowledge Permitted Warnings
+→ Confirm Dataset
+→ Run Analysis
+
+Validate:
+- Missing required columns.
+- Invalid numeric values.
+- Negative quantities where not permitted.
+- Invalid dates.
+- Duplicate records.
+- Unknown SKU identifiers.
+- Unknown location identifiers.
+- Inconsistent identifiers.
+- Missing route information.
+- Invalid or negative lead times.
+- Incompatible data relationships.
+- Missing sales history.
+- Insufficient data for requested calculations.
+
+Differentiate:
+- Blocking errors.
+- Warnings.
+- Informational notices.
+
+Do not silently replace missing values with zero when that would change business meaning.
+
+Do not silently invent sales history or route costs.
+
+Display row-level errors with the affected field and a clear explanation.
+
+Where safe, allow the user to download a validation report.
+
+The user must know which data was accepted, rejected, or excluded from a calculation.
+
+Preserve the original uploaded file and maintain an identifiable version or import record where supported.
+
+---
+
+# 7. CORE INVENTORY CALCULATION ENGINE
+
+Build deterministic, testable calculation logic.
+
+Keep the calculation engine separate from UI components.
+
+Use actual uploaded data and clearly documented assumptions.
+
+## 7.1 Usable inventory
+
+Define:
+
+Usable Stock = On-Hand Stock − Reserved Stock − Expired Stock
+
+Apply this formula according to the fields actually available.
+
+Avoid subtracting the same stock twice.
+
+Where batch-level expiry information is unavailable, do not pretend expired quantities have been identified.
+
+Validate the result and flag inconsistent records.
+
+## 7.2 Demand estimation
+
+Use the PRD's simple, explainable seven-day moving-average approach when sufficient daily sales history is available.
+
+Daily Demand Estimate = Total Units Sold in the Selected Seven-Day Window ÷ Number of Days in That Window
+
+Document how missing dates and incomplete history are handled.
+
+Do not silently treat missing observations as confirmed zero demand.
+
+If the available history is insufficient, show a clear warning and use only a documented fallback if that fallback is valid for the selected analysis.
+
+Do not claim advanced forecasting or machine-learning accuracy unless it has actually been implemented and evaluated.
+
+## 7.3 Days of cover
+
+When estimated daily demand is greater than zero:
+
+Days of Cover = Usable Stock ÷ Estimated Daily Demand
+
+Handle zero demand, missing demand, and invalid stock separately.
+
+Never display infinity or misleading numerical values.
+
+Use clear states such as:
+- No recent demand.
+- Insufficient sales history.
+- Zero usable stock.
+- Not calculable.
+
+## 7.4 Destination inventory gap
+
+Calculate:
+
+Inventory Gap =
+max(
+  0,
+  Estimated Daily Demand × Lead Time
+  + Safety Stock
+  − Usable Stock
+  − Eligible Incoming Stock
+)
+
+Only subtract incoming stock that is expected to arrive before the relevant need date.
+
+Define the safety-stock method explicitly.
+
+If the user has not supplied a safety-stock value or configuration, use a clearly labeled, documented default only when justified by the product design.
+
+Never imply that a default is a company-approved business policy.
+
+## 7.5 Safe source surplus
+
+Calculate:
+
+Safe Source Surplus =
+max(
+  0,
+  Usable Stock − Protected Reserve
+)
+
+The protected reserve must be derived from documented planning settings or an explicitly labeled assumption.
+
+A source location must not be allowed to give away inventory that the model has reserved to protect its own service level.
+
+## 7.6 Feasible transfer quantity
+
+Calculate the maximum feasible transfer quantity by considering:
+
+- Destination inventory gap.
+- Safe source surplus.
+- Route and transport availability.
+- Destination need date.
+- Transfer lead time.
+- Expiry suitability where expiry data exists.
+- Source and destination capacity where configured.
+- Pack-size rules where configured.
+- Other supplied hard constraints.
+
+A simplified starting point is:
+
+Feasible Quantity =
+min(
+  Destination Gap,
+  Source Safe Surplus,
+  Applicable Capacity Limit
+)
+
+Apply pack-size rounding and other constraints explicitly.
+
+The final quantity must never exceed the remaining feasible source supply or the destination's actual need.
+
+## 7.7 Hard constraints before ranking
+
+Reject or block a candidate transfer when:
+- No valid route exists and route feasibility cannot be established.
+- No positive destination gap exists.
+- No safe source surplus exists.
+- The transfer cannot arrive before the destination needs the stock.
+- Available expiry data indicates that the stock would not remain usable for the intended planning requirement.
+- A required capacity constraint is violated.
+- A required pack-size constraint cannot be satisfied.
+
+If a constraint is unknown because the required data is missing, label the result as unknown or unverified instead of pretending it passed.
+
+For every rejected candidate, preserve a useful reason, such as:
+- Insufficient safe surplus.
+- Arrival too late.
+- No eligible route.
+- No destination need.
+- Insufficient remaining shelf life.
+- Capacity constraint violated.
+- Pack-size constraint violated.
+- Required input missing.
+
+A rejection explanation must correspond to the actual failed condition.
+
+## 7.8 Recommendation ranking
+
+After feasibility checks, rank eligible candidates using explainable factors such as:
+- Destination urgency.
+- Shortage severity.
+- Transfer cost efficiency.
+- Arrival-time suitability.
+- Expiry suitability when applicable.
+- Operational feasibility.
+
+Normalize ranking inputs to compatible scales.
+
+Use documented, configurable weights where appropriate.
+
+Display the ranking factors and their contributions so a planner can understand why one recommendation appears above another.
+
+Do not describe a weighted heuristic as a globally optimal mathematical solution.
+
+If a candidate fails a hard constraint, a high score must never make it eligible.
+
+Do not hide rejected candidates when showing their reasons would help the user understand why alternatives were excluded.
+
+---
+
+# 8. RECOMMENDATION DETAILS
+
+Each recommendation should provide enough evidence for a planner to make an informed decision.
+
+Where data is available, show:
+
+- SKU.
+- Source location.
+- Destination location.
+- Recommended transfer quantity.
+- Destination inventory gap.
+- Source usable stock.
+- Protected reserve.
+- Source stock remaining after transfer.
+- Estimated daily demand.
+- Destination days of cover.
+- Estimated arrival time or date.
+- Lead time.
+- Estimated transport cost.
+- Expiry suitability.
+- Feasibility status.
+- Priority or ranking score.
+- Reason for recommendation.
+- Assumptions and relevant warnings.
+
+Provide a detail view that explains the calculation step by step.
+
+Example explanation structure:
+
+"Location North has a projected shortage of 120 units. Location Central has 180 units of safe surplus after its protected reserve. The selected route is expected to arrive before the destination's need date. A transfer of 120 units is feasible under the currently configured constraints."
+
+This is an illustrative explanation, not real inventory data. Only display a statement like this when the actual calculation supports it.
+
+Show the actual numbers and the reasoning derived from the selected dataset.
+
+If the recommendation is not feasible, explain the blocking condition.
+
+Never imply that a recommended transfer has been physically executed.
+
+---
+
+# 9. BASELINE VERSUS ORIGIN SIMULATION
+
+Build a fair comparison between a defined baseline policy and the ORIGIN recommendation plan.
+
+Both must use:
+- The same initial inventory.
+- The same demand assumptions.
+- The same planning horizon.
+- The same eligible routes.
+- The same transport costs.
+- The same applicable operational constraints.
+
+Define the baseline policy explicitly.
+
+For the initial MVP, a simple, documented baseline such as no inter-location transfers may be used if appropriate to the available data.
+
+Do not compare ORIGIN against an intentionally weak or unrealistic baseline and present the result as universal proof of superiority.
+
+Calculate and compare available metrics such as:
+- Unmet demand.
+- Fill rate.
+- Transfer cost.
+- Expiry-risk units.
+- Constraint violations.
+- Number of feasible recommendations.
+
+Define each metric consistently.
+
+For example:
+
+Fill Rate =
+Fulfilled Demand ÷ Total Demand
+
+Document how returns, cancellations, unavailable demand observations, or other unusual cases are handled if relevant.
+
+Report:
+- Baseline result.
+- ORIGIN result.
+- Absolute difference.
+- Percentage change when mathematically valid.
+- The assumptions used.
+
+When a percentage change is undefined because the baseline value is zero, show a suitable explanation rather than dividing by zero.
+
+Clearly distinguish simulation results from measured real-world business outcomes.
+
+Never invent an improvement percentage.
+
+---
+
+# 10. APPLICATION INFORMATION ARCHITECTURE
+
+Build a consistent application shell with a clear page hierarchy.
+
+Use the following primary sections.
+
+## 10.1 Public Landing Page
+
+Purpose:
+Explain ORIGIN and help visitors understand its value before creating an account.
+
+Include:
+- ORIGIN brand identity.
+- A strong, clean headline.
+- A concise explanation of the product.
+- A clear overview of its workflow.
+- A visual explanation of the inventory decision process.
+- Key capabilities.
+- A realistic product preview where appropriate.
+- Sign In.
+- Create Account.
+
+Do not invent customers, testimonials, partnerships, or measured business results.
+
+Avoid unnecessary marketing sections.
+
+The page should be premium, restrained, and focused.
+
+## 10.2 Authentication
+
+Create Account:
+- Simple form.
+- Clear validation.
+- Helpful error messages.
+- Password requirements when applicable.
+- Loading and success states.
+
+Sign In:
+- Clear fields.
+- Useful validation.
+- Password recovery where supported.
+- Safe error handling.
+
+Use the same visual identity as the main application.
+
+## 10.3 Organization Setup
+
+Allow a user to create an organization or join one through a secure, supported invitation flow.
+
+Do not allow arbitrary access to existing organizations.
+
+Explain each required field.
+
+Show progress and provide a way to resume interrupted setup.
+
+## 10.4 Overview
+
+Purpose:
+Give users a concise picture of their current inventory position and analysis status.
+
+Potential metrics, only when supported by valid data:
+- Total usable inventory.
+- Locations analyzed.
+- SKUs analyzed.
+- Locations with shortage risk.
+- Locations with excess inventory.
+- Feasible recommendations.
+- Estimated transfer cost.
+- Data-quality status.
+- Most urgent inventory risks.
+
+Every metric must have:
+- A defined calculation.
+- A relevant source dataset.
+- A useful explanation.
+- A loading state.
+- An empty state.
+- An error state where needed.
+
+If no analysis exists, show a clear empty state with the next useful action.
+
+Do not display fabricated zero values when the actual status is unknown.
+
+## 10.5 Data Studio
+
+Purpose:
+Manage data imports and understand data quality.
+
+Include:
+- Dataset overview.
+- CSV upload.
+- Templates.
+- Column mapping where needed.
+- Validation results.
+- Row-level errors.
+- Warnings.
+- Import history.
+- Dataset status.
+- Available data coverage.
+- Relevant data-quality summaries.
+
+Explain what each dataset is used for.
+
+## 10.6 Network
+
+Purpose:
+Understand the distribution network.
+
+Show locations and available route relationships.
+
+Use a table, simple diagram, or map only when it provides real value.
+
+Do not invent geographic coordinates.
+
+If no geographic data exists, provide a useful network table or relationship visualization instead of a fake map.
+
+Show relevant route information such as lead time and cost where available.
+
+## 10.7 Risk Analysis
+
+Purpose:
+Identify locations and SKUs that may face inventory shortages or other stock risks.
+
+Support:
+- Sorting by urgency.
+- Filtering by SKU.
+- Filtering by location.
+- Days-of-cover analysis.
+- Inventory-gap analysis.
+- Source inventory context.
+- Demand context.
+- Clear explanations of risk.
+
+The user should be able to select a risk and inspect the underlying calculation.
+
+Do not create a risk score without documenting how it is calculated.
+
+## 10.8 Recommendations
+
+Purpose:
+Review ranked, feasible stock-transfer candidates.
+
+Include:
+- Ranked recommendations.
+- Filters.
+- Search.
+- Sort controls.
+- Recommendation details.
+- Feasibility status.
+- Cost and lead time.
+- Explanation of ranking.
+- Rejection reasons where useful.
+- Export functionality.
+
+If recommendation review or acceptance status is implemented, distinguish a planner's decision from a physical shipment.
+
+Do not imply shipment execution.
+
+## 10.9 Scenario Lab
+
+Purpose:
+Explore the consequences of alternative planning choices.
+
+Where supported, allow users to change selected planning assumptions and compare outcomes.
+
+Possible controls:
+- Safety-stock settings.
+- Transfer-cost preferences.
+- Planning horizon.
+- Selected recommendation inclusion.
+- Available operational constraints.
+
+Do not expose a control unless its effect is implemented and measurable.
+
+Scenario changes must not silently overwrite the original analysis.
+
+Show:
+- Original scenario.
+- Modified assumptions.
+- Recalculated results.
+- Metric differences.
+- Relevant trade-offs.
+
+Label scenarios clearly.
+
+## 10.10 Evidence & Audit
+
+Purpose:
+Make ORIGIN's calculations understandable and traceable.
+
+Show available records for:
+- Data imports.
+- Validation outcomes.
+- Analysis runs.
+- Calculation assumptions.
+- Recommendation generation.
+- Relevant user actions.
+- Scenario changes.
+
+Only claim to provide an audit trail for events that are actually recorded.
+
+Do not present a simple UI activity list as a tamper-proof audit system.
+
+Keep audit data scoped to authorized organizations.
+
+## 10.11 Settings and Team
+
+Purpose:
+Manage the current organization and the user's preferences.
+
+Include supported settings for:
+- Organization information.
+- Planning defaults.
+- Team membership.
+- Roles and permissions.
+- User preferences.
+- Guided-tour replay.
+- Help.
+- Account and session actions.
+
+Enforce permissions on the backend.
+
+If a setting is not implemented, do not present it as an operational control.
+
+---
+
+# 11. REAL DATA ONLY: NO FAKE DASHBOARDS
+
+This is a strict requirement.
+
+Never populate production-facing pages with fabricated KPIs just to make the interface appear complete.
+
+Never show hardcoded values such as:
+- A fictional number of active warehouses.
+- A fictional reduction in stockouts.
+- A fictional transfer cost.
+- A fictional inventory value.
+- A fictional percentage of money saved.
+- A fictional recommendation count.
+
+When real data is available, calculate the displayed values from it.
+
+When data is missing, explain what is missing.
+
+Use distinct states for:
+- No data uploaded.
+- Data uploaded but not validated.
+- Data validated but no analysis run.
+- Analysis running.
+- Analysis completed.
+- Analysis failed.
+- Data insufficient for a particular metric.
+
+If a sample dataset is useful for testing, keep it explicitly labeled as synthetic sample data.
+
+Never mix synthetic records with real company data without explicit user consent and clear labeling.
+
+Make it easy to distinguish a sample workspace from an organization's actual data.
+
+---
+
+# 12. FUNCTIONAL INTERACTIONS
+
+Every visible interactive element must work.
+
+This includes:
+- Navigation tabs.
+- Buttons.
+- Dropdowns.
+- Filters.
+- Search.
+- Sort controls.
+- Dialogs.
+- Tooltips.
+- Guided-tour controls.
+- File upload.
+- Validation actions.
+- Analysis execution.
+- Scenario controls.
+- Export actions.
+- Settings.
+- Sign-in and sign-out.
+- Help.
+- Table row actions.
+
+Do not create decorative buttons with no behavior.
+
+If an action is unavailable, disable it appropriately and explain why.
+
+For long-running operations, show progress or an appropriate processing state.
+
+Prevent duplicate submissions where necessary.
+
+Display clear success, warning, and error feedback.
+
+Use confirmation dialogs for destructive actions.
+
+Avoid confirmation dialogs for harmless actions that can be easily reversed.
+
+---
+
+# 13. CSV EXPORTS AND REPORTING
+
+Implement genuine CSV export for supported results.
+
+Exports should:
+- Reflect the currently selected organization.
+- Respect the current filters where applicable.
+- Use clearly named columns.
+- Preserve meaningful numeric values.
+- Include units or clear field names.
+- Avoid silently omitting relevant records.
+- Include relevant analysis identifiers or timestamps where useful.
+
+Provide separate exports when appropriate for:
+- Recommendations.
+- Risk analysis.
+- Validation errors.
+- Scenario comparisons.
+
+Only implement an export when the underlying data exists.
+
+If a downloadable decision report is added, ensure its numbers match the application.
+
+Do not invent results in reports.
+
+---
+
+# 14. TECHNICAL ARCHITECTURE
+
+Before implementation, inspect the actual capabilities and structure of the current Google AI Studio project.
+
+Choose a stack that can genuinely run in the available environment.
+
+Keep the application modular and maintainable.
+
+The architecture must separate:
+
+1. User interface.
+2. Authentication and session management.
+3. Authorization.
+4. Data access and persistence.
+5. CSV ingestion and validation.
+6. Inventory calculations.
+7. Recommendation generation.
+8. Scenario simulation.
+9. Reporting and export.
+10. Audit and observability.
+
+Use a supported frontend framework and a real backend or server-side execution layer for protected operations.
+
+Python with pandas is a reasonable option for data processing when the environment supports it. A TypeScript or JavaScript backend is also acceptable if it can implement the same calculations correctly.
+
+Do not force an unsupported technology into the project merely because it appears in this specification.
+
+Do not put privileged operations exclusively in the browser.
+
+Do not place service credentials in frontend environment variables that are exposed to users.
+
+Keep calculation functions independently testable.
+
+Use explicit types and validation schemas where supported.
+
+Separate data models, business logic, persistence, and UI components.
+
+Avoid giant components that contain the entire application.
+
+Avoid duplicated calculation formulas across pages.
+
+All pages must use the same authoritative calculation logic.
+
+Provide clear error handling and structured logs that do not expose sensitive information.
+
+---
+
+# 15. RESPONSIVE DESIGN AND ACCESSIBILITY
+
+The application must work on:
+- Desktop.
+- Laptop.
+- Tablet.
+- Mobile.
+
+Desktop should provide an efficient operational workspace.
+
+On smaller screens:
+- Navigation must remain usable.
+- Tables should adapt or provide controlled horizontal scrolling.
+- Filters must remain accessible.
+- Dialogs must fit the viewport.
+- Guided-tour overlays must reposition correctly.
+- Important actions must remain reachable.
+
+Support:
+- Keyboard navigation.
+- Visible focus states.
+- Appropriate color contrast.
+- Accessible form labels.
+- Screen-reader-friendly names for icon-only buttons.
+- Accessible error messages.
+- Reduced-motion preferences.
+
+Do not rely on color alone to communicate risk or status.
+
+Use text labels and suitable visual indicators.
+
+---
+
+# 16. PERFORMANCE AND ERROR STATES
+
+Implement deliberate handling for:
+- Initial loading.
+- Page transitions.
+- Data fetching.
+- File upload.
+- CSV validation.
+- Analysis execution.
+- Export.
+- Authentication errors.
+- Permission errors.
+- Empty results.
+- Invalid data.
+- Network failures.
+- Storage failures.
+
+Avoid unnecessary full-page reloads.
+
+Prevent repeated requests caused by poorly managed component state.
+
+For larger datasets, use appropriate processing, pagination, or background execution if supported.
+
+Do not block the interface indefinitely during a long calculation.
+
+Provide a useful error message and recovery action.
+
+Do not expose internal stack traces or private infrastructure details to ordinary users.
+
+---
+
+# 17. SECURITY AND PRIVACY
+
+Implement security as part of the architecture, not as a final cosmetic step.
+
+Requirements include:
+- Real authentication.
+- Backend authorization.
+- Organization isolation.
+- Secure storage access.
+- Input validation.
+- Safe file processing.
+- Protected secrets.
+- Appropriate access rules.
+- Safe error handling.
+- Protection against unauthorized record access.
+- Data deletion or retention behavior consistent with implemented functionality.
+
+Never trust an organization ID, role, user ID, or permission supplied by the client without validating it against the authenticated server-side identity.
+
+Never allow a user to elevate their own privileges by changing a frontend value.
+
+Use the security controls appropriate to the selected backend and authentication provider.
+
+Do not claim that the application is production-secure without testing its security boundaries.
+
+---
+
+# 18. TESTING REQUIREMENTS
+
+Build and run meaningful tests.
+
+## 18.1 Calculation tests
+
+Test:
+- Usable stock.
+- Demand estimates.
+- Days of cover.
+- Inventory gap.
+- Safe source surplus.
+- Feasible transfer quantity.
+- Pack-size behavior.
+- Lead-time eligibility.
+- Expiry eligibility when expiry data exists.
+- Ranking.
+- Baseline calculations.
+- ORIGIN simulation.
+- Fill-rate calculations.
+- Zero-demand cases.
+- Missing-data cases.
+- Invalid-data cases.
+
+Use small, hand-verifiable datasets.
+
+Test boundary conditions.
+
+## 18.2 Recommendation tests
+
+Verify that:
+- A source cannot transfer more than its safe surplus.
+- A destination cannot receive more than its calculated need.
+- A late-arriving transfer is not marked feasible.
+- An ineligible route is not marked feasible.
+- Missing required inputs are not treated as verified constraints.
+- Expired or unsuitable stock is excluded when the relevant data supports that conclusion.
+- A ranking score cannot override a failed hard constraint.
+- Source stock after transfer is calculated correctly.
+
+## 18.3 Authentication and authorization tests
+
+Verify:
+- An unauthenticated user cannot access protected data.
+- A user cannot access another organization's records.
+- A user cannot gain permissions by changing frontend state.
+- Protected backend operations reject unauthorized requests.
+- Sign-out removes access to protected sessions as appropriate.
+- Direct navigation follows the correct access rules.
+
+## 18.4 User-flow tests
+
+Verify the primary flow:
+
+Create Account
+→ Authenticate
+→ Create Organization
+→ Upload CSVs
+→ Validate Data
+→ Resolve Blocking Errors
+→ Run Analysis
+→ Review Risks
+→ Inspect Recommendations
+→ Compare Outcomes
+→ Export Results
+
+Also test:
+- Returning-user login.
+- Interrupted onboarding.
+- Guided-tour replay.
+- Empty data states.
+- Failed imports.
+- Failed analysis.
+- Unauthorized access.
+
+Do not declare tests passed unless they were actually executed and passed.
+
+---
+
+# 19. IMPLEMENTATION PRIORITIES
+
+Build in stages, while maintaining a cohesive application.
+
+## P0 — Essential Working Product
+
+The initial MVP must prioritize:
+
+1. Premium, consistent application shell.
+2. Real authentication.
+3. Secure organization membership.
+4. Organization-scoped data access.
+5. Organization onboarding.
+6. CSV templates and uploads.
+7. Data validation.
+8. Core inventory calculations.
+9. Feasibility-first recommendation generation.
+10. Explainable recommendation details.
+11. Baseline versus ORIGIN simulation.
+12. KPI comparison using actual calculations.
+13. CSV exports.
+14. Guided onboarding and contextual help.
+15. Working navigation and empty states.
+16. Calculation and authorization tests.
+
+P0 features must be functional, not merely represented by buttons.
+
+## P1 — Valuable Enhancements
+
+After P0 is reliable, add:
+- More detailed expiry and FEFO logic.
+- Additional capacity constraints.
+- Better scenario controls.
+- Alternative-source exploration.
+- Richer analysis reports.
+- More detailed audit views.
+- Additional team-management workflows.
+- Improved data-mapping assistance.
+
+Only implement advanced features when the underlying data and architecture support them.
+
+## P2 — Future Capabilities
+
+Keep these outside the initial MVP unless the infrastructure and time genuinely permit:
+- Live ERP integrations.
+- Real-time inventory synchronization.
+- Physical shipment tracking.
+- Automated shipment execution.
+- Advanced seasonal forecasting.
+- Advanced machine-learning forecasting.
+- Large-scale mathematical optimization.
+
+Do not build superficial placeholders for these and describe them as completed.
+
+---
+
+# 20. VISUAL QUALITY ACCEPTANCE CRITERIA
+
+The application is not visually complete until the following are true:
+
+- The entire product consistently follows the white theme.
+- Typography feels intentional and premium.
+- Page headings and body text have clear hierarchy.
+- Floating navigation and panels are used selectively.
+- Soft blur is subtle and never reduces readability.
+- Spacing and alignment are consistent.
+- Tables look professional and remain readable.
+- Charts use real calculated data.
+- Buttons have clear states.
+- Empty states look designed rather than unfinished.
+- Error states are understandable.
+- Animations are restrained.
+- Mobile layouts work.
+- There are no unnecessary decorative 3D elements.
+- There are no excessive gradients or shadows.
+- The interface does not look like a generic dashboard template.
+- Every component serves a functional or explanatory purpose.
+
+The goal is not to make every page visually busy.
+
+The goal is to make every page feel deliberate, clear, and exceptionally well designed.
+
+---
+
+# 21. FUNCTIONAL QUALITY ACCEPTANCE CRITERIA
+
+The initial product is acceptable only when:
+
+1. Users can genuinely create accounts and sign in using the configured authentication system.
+2. Protected routes enforce authentication.
+3. Backend operations enforce authorization.
+4. Organization data is properly isolated.
+5. Data persists using the configured storage system.
+6. Users can upload supported CSV files.
+7. Validation produces meaningful results.
+8. The calculation engine uses documented formulas.
+9. Recommendations obey hard constraints.
+10. Recommendation explanations match the underlying calculations.
+11. Baseline and ORIGIN use equivalent starting conditions.
+12. KPI comparisons are mathematically consistent.
+13. Exports contain the expected data.
+14. The guided tour works.
+15. Important controls explain their purpose.
+16. Errors are visible and recoverable.
+17. Critical calculations have automated tests.
+18. Security boundaries have been tested.
+19. The application does not present sample values as real business results.
+20. Unsupported capabilities are disclosed rather than falsely claimed.
+
+---
+
+# 22. REQUIRED DEVELOPMENT APPROACH
+
+Do not start by producing a beautiful-looking but nonfunctional collection of screens.
+
+Follow this implementation sequence:
+
+### Phase 1: Inspect and Plan
+
+Inspect the available project environment.
+
+Identify:
+- Existing code and framework.
+- Available backend capabilities.
+- Authentication options.
+- Storage options.
+- Required configuration.
+- Dependencies.
+- Deployment limitations.
+
+Create a concise implementation plan based on actual capabilities.
+
+Do not assume an integration is available without checking.
+
+### Phase 2: Establish the Foundation
+
+Implement:
+- Application structure.
+- Design system.
+- Routing.
+- Authentication.
+- Organization model.
+- Authorization boundaries.
+- Persistence.
+- Error handling.
+
+### Phase 3: Implement the Core Engine
+
+Implement and test:
+- CSV validation.
+- Inventory calculations.
+- Demand estimation.
+- Risk analysis.
+- Feasibility checks.
+- Recommendation ranking.
+- Explainability.
+- Baseline comparison.
+
+### Phase 4: Build the Main Workspace
+
+Connect the pages to actual application data.
+
+Implement Overview, Data Studio, Network, Risk Analysis, Recommendations, Scenario Lab, Evidence & Audit, and Settings according to the defined priorities.
+
+### Phase 5: Add User Guidance
+
+Implement:
+- First-run onboarding.
+- Guided tours.
+- Contextual tooltips.
+- Metric explanations.
+- Persistent help.
+- Tour replay.
+
+### Phase 6: Verify the Entire Product
+
+Run:
+- Build checks.
+- Type checks where available.
+- Calculation tests.
+- Authentication tests.
+- Authorization tests.
+- Core user-flow tests.
+- Responsive layout checks.
+
+Fix actual errors rather than hiding them.
+
+### Phase 7: Report the Result Honestly
+
+At completion, provide a concise implementation report listing:
+
+- What is genuinely implemented.
+- What was tested.
+- Which tests passed.
+- Which configuration steps remain.
+- Which integrations require external setup.
+- Which requested features remain incomplete.
+- Any known limitations.
+
+Never claim a feature is complete simply because its UI exists.
+
+---
+
+# 23. FINAL INSTRUCTION
+
+Build ORIGIN as one coherent product, not as disconnected pages.
+
+The user experience must be premium and understandable.
+
+The business logic must be deterministic, explainable, and testable.
+
+The security model must rely on real authentication and backend authorization.
+
+The data must be real, correctly scoped, and persisted.
+
+Every major workflow must be functional.
+
+Every important control must explain its purpose.
+
+The first-time user must be guided without being overwhelmed.
+
+The experienced user must be able to work efficiently without repeated interruptions.
+
+Prioritize correctness, trust, clarity, and implementation quality over unnecessary features.
+
+If a technical limitation prevents a requirement from being implemented, explain the limitation and the exact next step needed. Do not fabricate functionality, security, data, or results.
+
+Begin by inspecting the current environment and establishing the implementation foundation. Then build the working product in the specified order.

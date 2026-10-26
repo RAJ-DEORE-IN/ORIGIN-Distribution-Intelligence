@@ -1,0 +1,38 @@
+{
+  "entities": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "mobileNumber": { "type": "string" },
+        "address": { "type": "string" },
+        "role": { "type": "string" },
+        "organizationId": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "email", "name"]
+    },
+    "Organization": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "industry": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile with real contact information including mobile and address"
+    },
+    "/organizations/{orgId}": {
+      "schema": "Organization",
+      "description": "FMCG organization profile and distribution configuration"
+    }
+  }
+}
